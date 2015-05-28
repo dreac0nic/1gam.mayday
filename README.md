@@ -1,13 +1,13 @@
-PROJECT {LEL} [1GAM.5.2015]
+PROJECT MAYDAY [1GAM.5.2015]
 ===========================
 
-Project {LEL} is a late May 2015 #1GAM attempt. The entire goal of this project
+Project MAYDAY is a late May 2015 #1GAM attempt. The entire goal of this project
 purely to learn a bit about Unity 5, get back into the habit of game development,
 and have some fun building a game "by the seat of your pants." While there is not much
 info now, the game will hopefully grow as it is put together.
 
 ## Description
-Project {LEL} is a First-Person adventure game. The goal is to create a semi-surreal
+Project MAYDAY is a First-Person adventure game. The goal is to create a semi-surreal
 environment for the player to explore. While at this point in time the implementation
 of combat is not yet known, it is highly likely that there will be some amount of combat
 for the player to engage in.
