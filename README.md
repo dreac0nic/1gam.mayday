@@ -32,7 +32,7 @@ While the baselines are used to guide the beginning and creation of future game 
 the priorities are what guide decisions such as what game goals stay and which ones
 get trashed.
 
- 1. Crisp and fluid player control.
+ 1. Crisp and fluid player control and interaction
  2. Approachable Game
      * Intuitive UI
      * Intruiging Environment (Visually, Conceptually)
