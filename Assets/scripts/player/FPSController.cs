@@ -1,13 +1,21 @@
-﻿using UnityEngine;
 using System.Collections;
+﻿using UnityEngine;
+using UnityEngine.UI;
 
 [RequireComponent(typeof (Rigidbody))]
 [RequireComponent(typeof (CapsuleCollider))]
 public class FPSController : MonoBehaviour
 {
 	// System Members
+	// TODO: Add layerMask to control what layers identify ground or "walkable" collisions.
 	public Camera Viewer;
+
+	// DEBUG
+	public Text PlayerInformation;
 	public bool ComponentMultiplication = false;
+
+	// Player adjustments.
+	public float MouseSensitivity = 1.0f;
 
 	// Movement Members
 	// TODO: Test and create defaults appropriate for normal circumstances.
@@ -20,6 +28,8 @@ public class FPSController : MonoBehaviour
 	private Rigidbody m_Rigidbody;
 	private CapsuleCollider m_Collider;
 	private bool m_IsGrounded;
+	private Quaternion m_PlayerRotation;
+	private Quaternion m_CameraRotation;
 
 	private void Start()
 	{
@@ -30,6 +40,32 @@ public class FPSController : MonoBehaviour
 		// If no camera is explicitely assigned, attempt to find one
 		if(!Viewer)
 			Viewer = GetComponentInChildren<Camera>();
+
+		// Get rotations for player and camera.
+		m_PlayerRotation = this.transform.localRotation;
+		m_CameraRotation = Viewer.transform.localRotation;
+	}
+
+	private void Update()
+	{
+		string debugText = "PLAYER INFORMATION\n";
+
+		debugText += "velocity: " + m_Rigidbody.velocity.ToString() + "\n";
+		debugText += "ground: " + m_IsGrounded + "\n";
+
+		PlayerInformation.text = debugText;
+
+		// Rotate player with mouse.
+		float oldRotation = transform.eulerAngles.y;
+		Vector2 mouseRotations = new Vector2(Input.GetAxis("Mouse X")*MouseSensitivity, Input.GetAxis("Mouse Y")*MouseSensitivity);
+
+		// TODO: Add camera X clamping to keep player from looking too high or low.
+		m_PlayerRotation *= Quaternion.Euler(0f, mouseRotations.x, 0f);
+		m_CameraRotation *= Quaternion.Euler(-mouseRotations.y, 0f, 0f);
+
+		// TODO: Add smoothing and acceleration if they REALLY want them.
+		this.transform.localRotation = m_PlayerRotation;
+		Viewer.transform.localRotation = m_CameraRotation;
 	}
 
 	private void FixedUpdate()
@@ -54,6 +90,7 @@ public class FPSController : MonoBehaviour
 				movement *= MovementSpeed;
 			}
 
+			// FIXME: Keep player from pushing over slopes too steep (animation slow? :DDDD)
 			if(m_Rigidbody.velocity.sqrMagnitude < (MovementSpeed*MovementSpeed))
 				m_Rigidbody.AddForce(movement, ForceMode.Impulse);
 		}
