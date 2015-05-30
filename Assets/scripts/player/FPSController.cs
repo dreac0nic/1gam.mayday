@@ -9,6 +9,7 @@ public class FPSController : MonoBehaviour
 	// System Members
 	// TODO: Add layerMask to control what layers identify ground or "walkable" collisions.
 	public Camera Viewer;
+	public Transform GroundCheckStart;
 
 	// DEBUG
 	public Text PlayerInformation;
@@ -30,6 +31,7 @@ public class FPSController : MonoBehaviour
 	private bool m_IsGrounded;
 	private Quaternion m_PlayerRotation;
 	private Quaternion m_CameraRotation;
+	private Vector3 m_GroundNormal;
 
 	private void Start()
 	{
@@ -70,8 +72,20 @@ public class FPSController : MonoBehaviour
 
 	private void FixedUpdate()
 	{
-		// TODO: Ground Check
-		m_IsGrounded = true;
+		// Ground Check
+		RaycastHit hitInfo;
+
+		// FIXME: Add configuration for ground check distance. Perhaps smaller sphere?
+		// FIXME: MAKE THIS NOT STUPID. CONFIGURABLE. FLEXIBLE. FREE.
+		if(Physics.SphereCast(GroundCheckStart.transform.position + new Vector3(0.0f, m_Collider.height/2f, 0.0f), m_Collider.radius, Vector3.down, out hitInfo, ((m_Collider.height/2f - m_Collider.radius) + 0.01f))) {
+			m_IsGrounded = true;
+			m_GroundNormal = hitInfo.normal;
+		} else {
+			m_IsGrounded = false;
+			m_GroundNormal = Vector3.up;
+		}
+
+		// TODO: Add jump recent code in here somewhere.
 
 		// Get direction vector based on input.
 		Vector2 input = new Vector2(Input.GetAxis("Horizontal"),
@@ -79,7 +93,7 @@ public class FPSController : MonoBehaviour
 
 		// Calculate new movement direction/speed.
 		if((Mathf.Abs(input.x) > float.Epsilon || Mathf.Abs(input.y) > float.Epsilon) && m_IsGrounded) {
-			Vector3 movement = Vector3.ProjectOnPlane(Viewer.transform.forward*input.y + Viewer.transform.right*input.x, new Vector3(0f, 1f, 0f)).normalized;
+			Vector3 movement = Vector3.ProjectOnPlane(Viewer.transform.forward*input.y + Viewer.transform.right*input.x, m_GroundNormal).normalized;
 
 			// Add speed to movement direction.
 			if(ComponentMultiplication) {
